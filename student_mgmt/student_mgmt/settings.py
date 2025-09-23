@@ -75,8 +75,8 @@ WSGI_APPLICATION = 'student_mgmt.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',       
-        'USER': 'postgres',       
+        'NAME': 'task',       
+        'USER': 'prajith',       
         'PASSWORD': '12345',  
         'HOST': 'localhost',      
         'PORT': '5432',  
