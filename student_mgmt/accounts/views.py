@@ -15,6 +15,10 @@ from .forms import StudentCreationForm
 # Your existing register_view function is here
 # ...
 
+def logout_view(request):
+    logout(request)
+    return redirect('login')
+
 def login_view(request):
     if request.method == 'POST':
         form = AuthenticationForm(request, data=request.POST)
