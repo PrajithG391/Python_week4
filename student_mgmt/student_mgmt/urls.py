@@ -1,25 +1,27 @@
-"""
-URL configuration for student_mgmt project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/5.2/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
+# student_mgmt/urls.py
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
+# You will also need a view for the homepage/root URL
+from django.shortcuts import render
+
+def homepage_view(request):
+    return render(request, 'homepage.html')
+
 urlpatterns = [
+    # Admin URL first
     path('admin/', admin.site.urls),
-    path('accounts/', include('accounts.urls')), 
-] + static(settings.MEDIA_URL, document_root = settings. MEDIA_ROOT)
+
+    # All of your app URLs go here
+    path('accounts/', include('accounts.urls')),
+
+    # A URL for the homepage (the root URL)
+    path('', homepage_view, name='home'),
+]
+
+# The static and media file handlers MUST come at the end
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
