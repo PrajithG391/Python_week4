@@ -1,0 +1,91 @@
+<!-- templates/students/student_delete_confirm.html -->
+{% extends 'base.html' %}
+
+{% block title %}Delete {{ student.get_full_name }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6 mx-auto">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <h4 class="mb-0">
+                    <i class="bi bi-exclamation-triangle"></i> Confirm Deletion
+                </h4>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-warning">
+                    <i class="bi bi-warning-circle"></i>
+                    <strong>Warning:</strong> This action cannot be undone!
+                </div>
+                
+                <p>Are you sure you want to delete the following student?</p>
+                
+                <!-- Student Summary -->
+                <div class="card bg-light">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-md-3 text-center">
+                                {% if student.profile_picture %}
+                                <img src="{{ student.profile_picture.url }}" alt="Profile" 
+                                     class="img-thumbnail rounded-circle" width="80" height="80" style="object-fit: cover;">
+                                {% else %}
+                                <div class="bg-secondary rounded-circle mx-auto d-flex align-items-center justify-content-center" 
+                                     style="width: 80px; height: 80px;">
+                                    <i class="bi bi-person text-white" style="font-size: 2rem;"></i>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-9">
+                                <h5 class="mb-1">{{ student.get_full_name }}</h5>
+                                <p class="mb-1">
+                                    <strong>Student ID:</strong> {{ student.student_id }}<br>
+                                    <strong>Department:</strong> {{ student.department }}<br>
+                                    <strong>Email:</strong> {{ student.email }}<br>
+                                    <strong>Status:</strong> 
+                                    <span class="badge {% if student.status == 'active' %}bg-success{% elif student.status == 'graduated' %}bg-info{% else %}bg-warning{% endif %}">
+                                        {{ student.get_status_display }}
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <h6>This will permanently delete:</h6>
+                    <ul class="text-muted">
+                        <li>Student profile and all personal information</li>
+                        <li>Academic records and GPA data</li>
+                        <li>Profile picture and uploaded files</li>
+                        <li>Any associated course enrollments (if any)</li>
+                    </ul>
+                </div>
+                
+                <!-- Confirmation Form -->
+                <form method="POST" class="mt-4">
+                    {% csrf_token %}
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'student_list' %}" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-trash"></i> Yes, Delete Student
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Alternative Actions -->
+        <div class="mt-3 text-center">
+            <p class="text-muted">Instead of deleting, you could:</p>
+            <a href="{% url 'student_update' student.pk %}" class="btn btn-sm btn-outline-warning me-2">
+                <i class="bi bi-pencil"></i> Change Status to Inactive
+            </a>
+            <a href="{% url 'student_detail' student.pk %}" class="btn btn-sm btn-outline-info">
+                <i class="bi bi-eye"></i> View Full Profile
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
