@@ -23,6 +23,22 @@ class User(AbstractUser):
     date_of_birth = models.DateField(null=True, blank=True)
     profile_pic = models.ImageField(upload_to='profile_pics/', null=True, blank=True)
     
+    # Fix the reverse accessor conflicts
+    groups = models.ManyToManyField(
+        'auth.Group',
+        related_name='custom_user_set',  # Changed from default 'user_set'
+        blank=True,
+        verbose_name='groups',
+        help_text='The groups this user belongs to.'
+    )
+    user_permissions = models.ManyToManyField(
+        'auth.Permission',
+        related_name='custom_user_permissions_set',  # Changed from default 'user_set'
+        blank=True,
+        verbose_name='user permissions',
+        help_text='Specific permissions for this user.'
+    )
+    
     def is_admin(self):
         """Check if user has admin role"""
         return self.role == 'admin'
