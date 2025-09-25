@@ -1,0 +1,162 @@
+<!-- templates/students/student_list.html -->
+{% extends 'base.html' %}
+
+{% block title %}Student Management{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Student Management</h2>
+    <a href="{% url 'student_create' %}" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Add New Student
+    </a>
+</div>
+
+<!-- Search and Filter Section -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="mb-0">Search & Filter</h5>
+    </div>
+    <div class="card-body">
+        <form method="GET" class="row g-3">
+            <div class="col-md-4">
+                {{ search_form.search.label_tag }}
+                {{ search_form.search }}
+            </div>
+            <div class="col-md-3">
+                {{ search_form.department.label_tag }}
+                {{ search_form.department }}
+            </div>
+            <div class="col-md-3">
+                {{ search_form.status.label_tag }}
+                {{ search_form.status }}
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-outline-primary me-2">Search</button>
+                <a href="{% url 'student_list' %}" class="btn btn-outline-secondary">Clear</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Results Summary -->
+<div class="alert alert-info">
+    <i class="bi bi-info-circle"></i> 
+    Showing {{ page_obj.start_index }}–{{ page_obj.end_index }} of {{ total_students }} students
+</div>
+
+<!-- Students Table -->
+<div class="card">
+    <div class="card-body">
+        {% if page_obj %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Student ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Department</th>
+                        <th>Semester</th>
+                        <th>Status</th>
+                        <th>GPA</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in page_obj %}
+                    <tr>
+                        <td><strong>{{ student.student_id }}</strong></td>
+                        <td>
+                            {% if student.profile_picture %}
+                            <img src="{{ student.profile_picture.url }}" alt="Profile" class="rounded-circle me-2" width="30" height="30">
+                            {% endif %}
+                            {{ student.get_full_name }}
+                        </td>
+                        <td>{{ student.email }}</td>
+                        <td>{{ student.department }}</td>
+                        <td>{{ student.current_semester }}</td>
+                        <td>
+                            {% if student.status == 'active' %}
+                            <span class="badge bg-success">{{ student.get_status_display }}</span>
+                            {% elif student.status == 'inactive' %}
+                            <span class="badge bg-warning">{{ student.get_status_display }}</span>
+                            {% elif student.status == 'graduated' %}
+                            <span class="badge bg-info">{{ student.get_status_display }}</span>
+                            {% else %}
+                            <span class="badge bg-danger">{{ student.get_status_display }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if student.gpa %}
+                            <span class="badge bg-light text-dark">{{ student.gpa }}</span>
+                            {% else %}
+                            <span class="text-muted">N/A</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm" role="group">
+                                <a href="{% url 'student_detail' student.pk %}" class="btn btn-outline-info" title="View Details">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a href="{% url 'student_update' student.pk %}" class="btn btn-outline-warning" title="Edit">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a href="{% url 'student_delete' student.pk %}" class="btn btn-outline-danger" title="Delete">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        {% if page_obj.has_other_pages %}
+        <nav aria-label="Student pagination">
+            <ul class="pagination justify-content-center mt-4">
+                {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1">First</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                </li>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                <li class="page-item active">
+                    <span class="page-link">{{ num }}</span>
+                </li>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                </li>
+                {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+
+        {% else %}
+        <div class="text-center py-5">
+            <i class="bi bi-people" style="font-size: 4rem; color: #6c757d;"></i>
+            <h4 class="mt-3">No students found</h4>
+            <p class="text-muted">Try adjusting your search criteria or add a new student.</p>
+            <a href="{% url 'student_create' %}" class="btn btn-primary">Add First Student</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
