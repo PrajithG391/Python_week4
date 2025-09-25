@@ -94,3 +94,55 @@ def admin_dashboard_view(request):
 def student_dashboard_view(request):
     """Student dashboard - for student users"""
     return render(request, 'accounts/student_dashboard.html')
+
+# accounts/views.py (Updated dashboard views - add to existing file)
+
+@login_required
+def admin_dashboard_view(request):
+    """Enhanced Admin dashboard with statistics"""
+    from students.models import Student
+    
+    if not request.user.is_admin():
+        messages.error(request, 'Access denied. Admin only.')
+        return redirect('student_dashboard')
+    
+    # Get statistics for dashboard
+    total_students = Student.objects.count()
+    active_students = Student.objects.filter(status='active').count()
+    inactive_students = Student.objects.filter(status='inactive').count()
+    graduated_students = Student.objects.filter(status='graduated').count()
+    
+    # Recent students (last 5 added)
+    recent_students = Student.objects.order_by('-created_at')[:5]
+    
+    # Department-wise count
+    from django.db.models import Count
+    department_stats = Student.objects.values('department').annotate(
+        count=Count('department')
+    ).order_by('-count')[:5]
+    
+    context = {
+        'total_students': total_students,
+        'active_students': active_students,
+        'inactive_students': inactive_students,
+        'graduated_students': graduated_students,
+        'recent_students': recent_students,
+        'department_stats': department_stats,
+    }
+    return render(request, 'accounts/admin_dashboard.html', context)
+
+@login_required
+def student_dashboard_view(request):
+    """Enhanced Student dashboard"""
+    try:
+        student_profile = request.user.student_profile
+        has_profile = True
+    except:
+        student_profile = None
+        has_profile = False
+    
+    context = {
+        'student_profile': student_profile,
+        'has_profile': has_profile,
+    }
+    return render(request, 'accounts/student_dashboard.html', context)
