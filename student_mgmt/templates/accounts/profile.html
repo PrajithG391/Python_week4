@@ -1,11 +1,64 @@
 {% extends 'base.html' %}
 
-{% block title %}Profile{% endblock %}
+{% block title %}Profile - {{ user.username }}{% endblock %}
 
 {% block content %}
-<div class="container my-5">
-    <h2>Welcome, {{ user.username }}!</h2>
-    <p>This is your profile page.</p>
-    <a href="#">Edit Profile</a>
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4>My Profile</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        {% if user.profile_pic %}
+                        <img src="{{ user.profile_pic.url }}" class="img-fluid rounded" alt="Profile Picture">
+                        {% else %}
+                        <div class="bg-light p-5 text-center rounded">
+                            <i class="bi bi-person-circle" style="font-size: 4rem;"></i>
+                            <p>No profile picture</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-8">
+                        <table class="table">
+                            <tr>
+                                <th>Username:</th>
+                                <td>{{ user.username }}</td>
+                            </tr>
+                            <tr>
+                                <th>Email:</th>
+                                <td>{{ user.email }}</td>
+                            </tr>
+                            <tr>
+                                <th>Role:</th>
+                                <td>{{ user.get_role_display }}</td>
+                            </tr>
+                            {% if user.is_student %}
+                            <tr>
+                                <th>Roll Number:</th>
+                                <td>{{ user.roll_number }}</td>
+                            </tr>
+                            <tr>
+                                <th>Department:</th>
+                                <td>{{ user.department }}</td>
+                            </tr>
+                            <tr>
+                                <th>Year of Admission:</th>
+                                <td>{{ user.year_of_admission }}</td>
+                            </tr>
+                            <tr>
+                                <th>Date of Birth:</th>
+                                <td>{{ user.date_of_birth|date:"F d, Y" }}</td>
+                            </tr>
+                            {% endif %}
+                        </table>
+                        <a href="#" class="btn btn-primary">Edit Profile</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
