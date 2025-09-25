@@ -77,7 +77,14 @@ WSGI_APPLICATION = 'student_mgmt.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-     
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'student_mgmt_db',
+        'USER': 'student_admin',
+        'PASSWORD': '12345',  # In production, use environment variables!
+        'HOST': 'localhost',  # Or '127.0.0.1'
+        'PORT': '5432',  # Default PostgreSQL port
+    }
 }
 
 
@@ -115,14 +122,15 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static') 
 ]
+STATIC_ROOT = os.path.join(BASE_DIR,'staticfiles')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
