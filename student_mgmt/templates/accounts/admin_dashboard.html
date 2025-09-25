@@ -1,0 +1,179 @@
+<!-- templates/accounts/admin_dashboard.html (Updated) -->
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Admin Dashboard</h2>
+    <div class="text-muted">
+        Welcome back, <strong>{{ user.username }}</strong>!
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title mb-0">Total Students</h6>
+                        <h2 class="mb-0">{{ total_students }}</h2>
+                    </div>
+                    <i class="bi bi-people" style="font-size: 2rem; opacity: 0.7;"></i>
+                </div>
+            </div>
+            <div class="card-footer bg-primary border-0">
+                <a href="{% url 'student_list' %}" class="text-white text-decoration-none">
+                    View all students <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title mb-0">Active Students</h6>
+                        <h2 class="mb-0">{{ active_students }}</h2>
+                    </div>
+                    <i class="bi bi-person-check" style="font-size: 2rem; opacity: 0.7;"></i>
+                </div>
+            </div>
+            <div class="card-footer bg-success border-0">
+                <small>Currently enrolled</small>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title mb-0">Graduated</h6>
+                        <h2 class="mb-0">{{ graduated_students }}</h2>
+                    </div>
+                    <i class="bi bi-mortarboard" style="font-size: 2rem; opacity: 0.7;"></i>
+                </div>
+            </div>
+            <div class="card-footer bg-info border-0">
+                <small>Alumni count</small>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card bg-warning text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title mb-0">Inactive</h6>
+                        <h2 class="mb-0">{{ inactive_students }}</h2>
+                    </div>
+                    <i class="bi bi-person-dash" style="font-size: 2rem; opacity: 0.7;"></i>
+                </div>
+            </div>
+            <div class="card-footer bg-warning border-0">
+                <small>Need attention</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-lightning"></i> Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-2">
+                        <a href="{% url 'student_create' %}" class="btn btn-primary w-100">
+                            <i class="bi bi-person-plus"></i> Add New Student
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="{% url 'student_list' %}" class="btn btn-outline-primary w-100">
+                            <i class="bi bi-list"></i> View All Students
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="#" class="btn btn-outline-secondary w-100">
+                            <i class="bi bi-book"></i> Manage Courses
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="#" class="btn btn-outline-success w-100">
+                            <i class="bi bi-bar-chart"></i> Generate Reports
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Recent Students -->
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-clock-history"></i> Recently Added Students</h5>
+                <a href="{% url 'student_list' %}" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+            <div class="card-body">
+                {% if recent_students %}
+                <div class="table-responsive">
+                    <table class="table table-hover table-sm">
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th>ID</th>
+                                <th>Department</th>
+                                <th>Status</th>
+                                <th>Added</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for student in recent_students %}
+                            <tr>
+                                <td>
+                                    {% if student.profile_picture %}
+                                    <img src="{{ student.profile_picture.url }}" alt="Profile" 
+                                         class="rounded-circle me-2" width="25" height="25" style="object-fit: cover;">
+                                    {% endif %}
+                                    {{ student.get_full_name }}
+                                </td>
+                                <td>{{ student.student_id }}</td>
+                                <td>{{ student.department }}</td>
+                                <td>
+                                    {% if student.status == 'active' %}
+                                    <span class="badge bg-success">Active</span>
+                                    {% else %}
+                                    <span class="badge bg-secondary">{{ student.get_status_display }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ student.created_at|timesince }} ago</td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="{% url 'student_detail' student.pk %}" class="btn btn-outline-info btn-sm">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a href="{% url 'student_update' student.pk %}" class="btn btn-outline-warning btn-sm">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {%
