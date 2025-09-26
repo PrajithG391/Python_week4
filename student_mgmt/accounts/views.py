@@ -38,7 +38,7 @@ def login_view(request):
         if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
-            # Verify credentials
+           
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)  # Create session
