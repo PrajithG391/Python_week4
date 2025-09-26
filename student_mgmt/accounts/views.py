@@ -43,7 +43,7 @@ def login_view(request):
             if user is not None:
                 login(request, user)  # Create session
                 messages.success(request, f'Welcome back, {username}!')
-                # Redirect based on role
+               
                 if user.is_admin():
                     return redirect('admin_dashboard')
                 else:
